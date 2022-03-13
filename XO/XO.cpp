@@ -169,7 +169,7 @@ public:
 		char odabir;
 		if (_krajIgre == true) {
 			system("cls");
-			Ispis();			
+			Ispis();
 			cout << "(N)ova partija / Bilo koje slovo za izlaz: ";
 			cin >> odabir;
 			if (odabir == 'N' || odabir == 'n') {
@@ -179,11 +179,11 @@ public:
 				_krajIgre = false;
 			}
 
-			 
-			
+
+
 		}
 		return _krajIgre;
-		
+
 	}
 	void setKraj() {
 		_krajIgre = true;
@@ -255,29 +255,31 @@ public:
 
 };
 
-
+void Ocisti() {
+	system("cls");
+}
 void  main()
 {
 	xo igra;
 	igra.DodajIgrace();
-	system("cls");
-
 	int lokacija = 0;
 	do {
-
+		
 		igra.Ispis();
-		cout << "Lokacija->";
-		cin >> lokacija;
-		_brojacPoteza++;
-		if (_brojacPoteza == 9) {
+		if (_brojacPoteza < 9) {
+			cout << "Lokacija->";
+			cin >> lokacija;
+
+			Ocisti();
+			_brojacPoteza++;
+			igra.Igraj(lokacija);
+		}
+		else{
 			igra.OcistiMatricu();
 			igra.setKraj();
-		}
-		else {
 			system("cls");
-			if (_brojacPoteza != 9)
-				igra.Igraj(lokacija);
 		}
+		
 
 	} while (igra.getKrajIgre() == false);
 
