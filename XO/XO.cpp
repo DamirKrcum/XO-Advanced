@@ -12,6 +12,7 @@ char* AlocirajIKopiraj(const char* tekst) {
 const int redova = 3;
 const int kolona = 3;
 int _igracNaPotezu = 0;
+int _brojacPoteza = 0;
 class igrac {
 private:
 	const char* _ime;
@@ -75,11 +76,7 @@ class xo {
 private:
 	char _niz[redova][kolona];
 	bool _krajIgre;
-	void OcistiMatricu() {
-		for (int i = 0; i < redova; i++)
-			for (int j = 0; j < kolona; j++)
-				_niz[i][j] = ' ';
-	}
+
 	void PozicijaIzLokacije(int lokacija, int& r, int& k) {
 		switch (lokacija) {
 		case 1: r = 0, k = 0;
@@ -113,6 +110,11 @@ public:
 		_krajIgre = false;
 		OcistiMatricu();
 	}
+	void OcistiMatricu() {
+		for (int i = 0; i < redova; i++)
+			for (int j = 0; j < kolona; j++)
+				_niz[i][j] = ' ';
+	}
 	void DodajIgrace() {
 		cout << " X:";
 		X.SetIme();
@@ -121,8 +123,8 @@ public:
 
 	}
 	void Ispis() {
-		cout << "Rezultat: " << "(X)" << X.GetIme() << " -> " << X.GetBrojPobjeda() << "  :  " << O.GetBrojPobjeda() << " <- " << O.GetIme() <<"(O)" << endl;
-		cout << "BROJ POTEZA:" << "(X)" << X.GetIme() << " -> " << X.GetBrojPoteza() << "  :  " << O.GetBrojPoteza() << " <- " << O.GetIme() <<"(O)" << endl;
+		cout << "Rezultat: " << "(X)" << X.GetIme() << " -> " << X.GetBrojPobjeda() << "  :  " << O.GetBrojPobjeda() << " <- " << O.GetIme() << "(O)" << endl;
+		cout << "BROJ POTEZA:" << "(X)" << X.GetIme() << " -> " << X.GetBrojPoteza() << "  :  " << O.GetBrojPoteza() << " <- " << O.GetIme() << "(O)" << endl;
 
 		for (int i = 0; i < redova; i++) {
 			for (int j = 0; j < kolona; j++)
@@ -164,21 +166,28 @@ public:
 		}
 	}
 	bool getKrajIgre() {
-
 		char odabir;
 		if (_krajIgre == true) {
-			(_igracNaPotezu % 2 == 0) ? O.dodajPobjedu() : X.dodajPobjedu();
-			Ispis();
-			cout << "\n(N)ova partija \t Bilo koji znak za kraj!  - >";
+			system("cls");
+			Ispis();			
+			cout << "(N)ova partija / Bilo koje slovo za izlaz: ";
 			cin >> odabir;
-			if (odabir == 'n' || odabir == 'N') {
-				OcistiMatricu();
+			if (odabir == 'N' || odabir == 'n') {
 				system("cls");
-				return false;
+				OcistiMatricu();
+				_brojacPoteza = 0;
+				_krajIgre = false;
 			}
 
+			 
+			
 		}
 		return _krajIgre;
+		
+	}
+	void setKraj() {
+		_krajIgre = true;
+		_brojacPoteza = 0;
 	}
 	bool ProvjeriKolone() {
 		char PrviZnak;
@@ -191,8 +200,10 @@ public:
 				for (int i = 0; i < redova; i++)
 					if (PrviZnak == _niz[i][j])
 						brojac++;
-				if (brojac == 3)
+				if (brojac == 3) {
+					(_igracNaPotezu % 2 == 0) ? O.dodajPobjedu() : X.dodajPobjedu();
 					return true;
+				}
 			}
 		}
 		return false;
@@ -208,8 +219,10 @@ public:
 				for (int j = 0; j < redova; j++)
 					if (PrviZnak == _niz[i][j])
 						brojac++;
-				if (brojac == 3)
+				if (brojac == 3) {
+					(_igracNaPotezu % 2 == 0) ? O.dodajPobjedu() : X.dodajPobjedu();
 					return true;
+				}
 			}
 		}
 		return false;
@@ -218,13 +231,25 @@ public:
 		char PrviZnak = _niz[0][0];
 		if (PrviZnak == ' ')
 			return false;
-		return (PrviZnak == _niz[1][1] && PrviZnak == _niz[2][2]);
+
+		if (PrviZnak == _niz[1][1] && PrviZnak == _niz[2][2])
+		{
+			(_igracNaPotezu % 2 == 0) ? O.dodajPobjedu() : X.dodajPobjedu();
+			return true;
+		}
+		else
+			return false;
 	}
 	bool ProvjeriDijagonalu2() {
 		char PrviZnak = _niz[0][2];
 		if (PrviZnak == ' ')
 			return false;
-		return (PrviZnak == _niz[1][1] && PrviZnak == _niz[2][0]);
+		if (PrviZnak == _niz[1][1] && PrviZnak == _niz[2][0]) {
+			(_igracNaPotezu % 2 == 0) ? O.dodajPobjedu() : X.dodajPobjedu();
+			return true;
+		}
+		else
+			return false;
 
 	}
 
@@ -239,13 +264,20 @@ void  main()
 
 	int lokacija = 0;
 	do {
+
 		igra.Ispis();
 		cout << "Lokacija->";
 		cin >> lokacija;
-		system("cls");
-
-		igra.Igraj(lokacija);
-
+		_brojacPoteza++;
+		if (_brojacPoteza == 9) {
+			igra.OcistiMatricu();
+			igra.setKraj();
+		}
+		else {
+			system("cls");
+			if (_brojacPoteza != 9)
+				igra.Igraj(lokacija);
+		}
 
 	} while (igra.getKrajIgre() == false);
 
